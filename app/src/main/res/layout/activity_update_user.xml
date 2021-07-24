@@ -37,7 +37,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/guidelineUpdateUsers">
 
-        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+        <AutoCompleteTextView
+            android:id="@+id/timezoneInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="none"

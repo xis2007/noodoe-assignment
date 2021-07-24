@@ -8,5 +8,15 @@ import java.util.regex.Pattern
 
 
 class UpdateUserViewModel(application: Application): AndroidViewModel(application){
+    val emailText = MutableLiveData<String>("")
+    val timezoneSelection = MutableLiveData<String>("")
 
+    private fun updateUser(timeZone: String) {
+
+    }
+
+    fun setUserEmailText(email: String) {
+        val emailString = "Email: $email"
+        emailText.postValue(emailString)
+    }
 }
