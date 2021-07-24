@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">NoodoeAssignment</string>
+    <string name="email_hint">Email</string>
+    <string name="pw_hint">Password</string>
+    <string name="txt_login_button">LOG IN</string>
+    <string name="email_error_hint">請輸入有效的郵箱地址</string>
+    <string name="pw_error_hint">請輸入正確的密碼格式</string>
+    <string name="email_tag">Email:</string>
+    <string name="timezone_hint">Timezone</string>
 </resources>
