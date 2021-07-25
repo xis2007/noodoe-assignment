@@ -1,5 +1,5 @@
 package com.example.noodoeassignment.model.entity
 
-data class UpdateResponse(
+data class UpdateUserResponse(
     val updatedAt: String
 )

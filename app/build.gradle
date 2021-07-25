@@ -20,6 +20,7 @@ android {
 
     buildTypes {
         release {
+            buildConfigField "String", "BASE_URL", '"https://watch-master-staging.herokuapp.com/api/"'
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -51,9 +52,11 @@ dependencies {
     // OkHttp
     implementation "com.squareup.okhttp3:okhttp:4.7.2"
     // Coroutines
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.1'
-    // Livedata
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
+    // Lifecycle components
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1"
 }
