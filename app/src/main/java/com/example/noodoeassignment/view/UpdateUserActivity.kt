@@ -28,7 +28,7 @@ class UpdateUserActivity : BaseActivity() {
                 override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(newTimezone: CharSequence, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(editable: Editable) {
-                    updateUserViewModel.updateUserTimezone(editable.toString())
+                    updateUserViewModel.updateUserTimezone("", editable.toString(), "session ID") // TODO use real data
                 }
             })
         }

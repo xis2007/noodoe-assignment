@@ -5,7 +5,9 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.example.noodoeassignment.api.*
 
-open class BaseRepository {
+open class BaseRepository(
+
+) {
     suspend fun <T> remoteCall(call: suspend () -> ApiResponse<T>): Resource<T> {
         return try {
             val apiResponse = call.invoke()

@@ -1,14 +1,24 @@
 package com.example.noodoeassignment.viewModel
 
 import android.app.Application
+import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.noodoeassignment.R
+import com.example.noodoeassignment.api.ApiInterface
+import com.example.noodoeassignment.api.Resource
+import com.example.noodoeassignment.model.repository.LoginRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 
 
-class LoginViewModel(application: Application): AndroidViewModel(application){
+class LoginViewModel(
+    application: Application,
+    private val loginRepository: LoginRepository
+): AndroidViewModel(application){
     private val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{4,}$"
     private var isEmailValid = false
     private var isPwValid = false
@@ -42,6 +52,26 @@ class LoginViewModel(application: Application): AndroidViewModel(application){
     }
 
     fun login(email: String, pw: String) {
-        // TODO fire API
+        viewModelScope.launch(Dispatchers.IO) {
+            val remoteResource = loginRepository.login(email, pw)
+            when (remoteResource.status) {
+                Resource.Status.SUCCESS -> {
+                    var loginResponse = remoteResource.data
+                    if(loginResponse != null) {
+
+                    } else {
+
+                    }
+                }
+
+                Resource.Status.ERROR -> {
+
+                }
+
+                Resource.Status.LOADING -> {
+
+                }
+            }
+        }
     }
 }

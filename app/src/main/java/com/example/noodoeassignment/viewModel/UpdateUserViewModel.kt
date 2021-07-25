@@ -3,18 +3,44 @@ package com.example.noodoeassignment.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import com.example.noodoeassignment.R
-import java.util.regex.Pattern
+import androidx.lifecycle.viewModelScope
+import com.example.noodoeassignment.api.Resource
+import com.example.noodoeassignment.model.repository.UpdateUserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
-class UpdateUserViewModel(application: Application): AndroidViewModel(application){
+class UpdateUserViewModel(
+    application: Application,
+    private val updateUserRepository: UpdateUserRepository
+): AndroidViewModel(application){
     val email = MutableLiveData<String>("")
     val timezoneSelection = MutableLiveData<String>("")
     val isUpdatingServer = MutableLiveData<Boolean>(false)
 
-    fun updateUserTimezone(timeZone: String) {
+    fun updateUserTimezone(userObjectId: String, timeZone: String, sessionId:String) {
         isUpdatingServer.postValue(true)
-        // TODO update timezone on server
+        viewModelScope.launch(Dispatchers.IO) {
+            val remoteResource = updateUserRepository.updateUser(userObjectId, timeZone, sessionId)
+            when (remoteResource.status) {
+                Resource.Status.SUCCESS -> {
+                    var loginResponse = remoteResource.data
+                    if(loginResponse != null) {
+
+                    } else {
+
+                    }
+                }
+
+                Resource.Status.ERROR -> {
+
+                }
+
+                Resource.Status.LOADING -> {
+
+                }
+            }
+        }
     }
 
     fun setUserEmail(newEmail: String) {
