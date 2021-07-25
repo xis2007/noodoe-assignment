@@ -22,23 +22,35 @@ class UpdateUserActivity : BaseActivity() {
     override fun initViews() {
         val items = listOf("Timezone1", "Timezone12", "Timezone3", "Timezone4")
         val adapter = ArrayAdapter(this@UpdateUserActivity, R.layout.item_timezone, items)
-        timezoneInput.setAdapter(adapter)
+        timezoneInput.apply{
+            setAdapter(adapter)
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(newTimezone: CharSequence, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(editable: Editable) {
+                    updateUserViewModel.updateUserTimezone(editable.toString())
+                }
+            })
+        }
 
+        updateUserViewModel.apply {
+            email.observe(this@UpdateUserActivity, Observer { email ->
+                emailText.text = email
+            })
 
-        timezoneInput.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                // TODO fire API to get
-            }
-            override fun afterTextChanged(s: Editable) {}
-        })
+            timezoneSelection.observe(this@UpdateUserActivity, Observer { timezone ->
+
+            })
+
+            isUpdatingServer.observe(this@UpdateUserActivity, Observer { isUpdating ->
+                timezoneInput.isEnabled = !isUpdating
+            })
+        }
     }
 
     override fun initActions() {
         // TODO get user data from Login and set email
-        updateUserViewModel.setUserEmailText("test2@qq.com")
-        updateUserViewModel.emailText.observe(this@UpdateUserActivity, Observer { email ->
-            emailText.text = email
-        })
+        updateUserViewModel.setUserEmail("test2@qq.com")
+
     }
 }

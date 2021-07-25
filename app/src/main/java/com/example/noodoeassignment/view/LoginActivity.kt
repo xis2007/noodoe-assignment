@@ -30,9 +30,7 @@ class LoginActivity : BaseActivity() {
                 pwEditText.text.toString()
             )
         }
-    }
 
-    override fun initActions() {
         loginViewModel.apply {
             emailErrorHint.observe(this@LoginActivity, Observer { emailErrorHint ->
                 emailInputLayout.error = emailErrorHint
@@ -46,5 +44,9 @@ class LoginActivity : BaseActivity() {
                 loginButton.isEnabled = isEnabled
             })
         }
+    }
+
+    override fun initActions() {
+
     }
 }
