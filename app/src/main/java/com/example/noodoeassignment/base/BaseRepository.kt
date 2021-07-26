@@ -1,20 +1,20 @@
 package com.example.noodoeassignment.base
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
-import androidx.lifecycle.map
-import com.example.noodoeassignment.api.*
+import com.example.noodoeassignment.api.ApiError
+import com.example.noodoeassignment.api.ApiErrorCodeMessage
+import com.example.noodoeassignment.api.Resource
+import retrofit2.Response
 
-open class BaseRepository(
-
-) {
-    suspend fun <T> remoteCall(call: suspend () -> ApiResponse<T>): Resource<T> {
+open class BaseRepository {
+    suspend fun <T> remoteCall(call: suspend () -> Response<T>): Resource<T> {
         return try {
-            val apiResponse = call.invoke()
+            val response = call.invoke()
 
-            when (apiResponse.errorCode) {
-                0 -> { Resource.success(apiResponse.data) }
-                else -> { Resource.error(ApiError(apiResponse.errorCode, apiResponse.errorMessage), null) }
+            when (response.isSuccessful) {
+                true -> { Resource.success(response.body()) }
+                else -> {
+                    Resource.error(ApiError(response.code(), response.message()), null)
+                }
             }
         } catch (e: Exception) {
             Resource.error(ApiError(ApiErrorCodeMessage.SYSTEM_ERROR_CODE, e.localizedMessage), null)

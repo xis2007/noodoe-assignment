@@ -7,7 +7,7 @@ import com.example.noodoeassignment.model.entity.LoginResponse
 
 class LoginRepository(
     private val apiInterface: ApiInterface
-) : BaseRepository() {
+): BaseRepository() {
     suspend fun login(email: String, pw: String): Resource<LoginResponse> {
         return remoteCall { apiInterface.logIn(email, pw) }
     }

@@ -2,7 +2,6 @@ package com.example.noodoeassignment.viewModel
 
 import android.app.Application
 import android.util.Log
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,60 +15,87 @@ import java.util.regex.Pattern
 
 
 class LoginViewModel(
-    application: Application,
-    private val loginRepository: LoginRepository
+    application: Application
 ): AndroidViewModel(application){
+    private val loginRepository: LoginRepository by lazy {
+        LoginRepository(ApiInterface.getInstance())
+    }
+
     private val PASSWORD_PATTERN = "^(?=.*[0-9])(?=.*[@#$%^&+=!])(?=\\S+$).{4,}$"
     private var isEmailValid = false
     private var isPwValid = false
+    private var isPwLengthValid = false
 
     val emailErrorHint = MutableLiveData<String?>("")
     val passwordErrorHint = MutableLiveData<String?>("")
     val isLogInButtonEnabled = MutableLiveData<Boolean>(false)
+    val isLoginSuccessful = MutableLiveData<Boolean?>(null)
 
-    fun verifyEmail(inputEmail: String) {
-        isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches();
-        val emailErrorHInt: String? = when (isEmailValid){
-            true -> null
-            false -> getApplication<Application>().getString(R.string.email_error_hint)
+    fun verifyEmail(inputEmail: String, hasFocus: Boolean) {
+        if(!hasFocus) {
+            isEmailValid = android.util.Patterns.EMAIL_ADDRESS.matcher(inputEmail).matches();
+            val emailErrorHint: String? = when (isEmailValid){
+                true -> null
+                false -> getApplication<Application>().getString(R.string.email_error_hint)
+            }
+
+            this.emailErrorHint.postValue(emailErrorHint)
+            verifyLoginButton()
         }
-        emailErrorHint.postValue(emailErrorHInt)
+    }
+
+    fun verifyPasswordLength(inputPassword: String) {
+        isPwLengthValid = inputPassword.length >= 8
         verifyLoginButton()
     }
 
     fun verifyPassword(inputPassword: String) {
-        isPwValid = Pattern.compile(PASSWORD_PATTERN).matcher(inputPassword).matches()
+
+        isPwValid = Pattern.compile("[a-zA-Z0-9]*").matcher(inputPassword).matches()
+
         val pwErrorHint: String? = when(isPwValid) {
             true -> null
             false -> getApplication<Application>().getString(R.string.pw_error_hint)
         }
+        Log.d("inputPassword", "inputPassword = $inputPassword is $isPwValid")
         passwordErrorHint.postValue(pwErrorHint)
-        verifyLoginButton()
     }
 
     private fun verifyLoginButton() {
-        isLogInButtonEnabled.postValue(isEmailValid && isPwValid)
+        isLogInButtonEnabled.postValue(isEmailValid && isPwLengthValid)
     }
 
-    fun login(email: String, pw: String) {
+    fun checkValidityAndLogin(email: String, pw: String) {
+        verifyPassword(pw)
+        if(isPwValid) {
+            login(email, pw)
+        }
+    }
+
+    private fun login(email: String, pw: String) {
+        Log.d("login", "loginnnnnnn = $email & $pw")
         viewModelScope.launch(Dispatchers.IO) {
-            val remoteResource = loginRepository.login(email, pw)
-            when (remoteResource.status) {
+            val loginResponse = loginRepository.login(email, pw)
+
+            when (loginResponse.status) {
                 Resource.Status.SUCCESS -> {
-                    var loginResponse = remoteResource.data
+                    var loginResponse = loginResponse.data
+                    Log.d("login", "loginnnnnnn = SUCCESS $loginResponse")
+
                     if(loginResponse != null) {
-
+                        isLoginSuccessful.postValue(true)
                     } else {
-
+                        isLoginSuccessful.postValue(false)
                     }
                 }
 
                 Resource.Status.ERROR -> {
-
+                    Log.d("login", "loginnnnnnn = ERROR ${loginResponse.apiError?.errorCode} with message = ${loginResponse.apiError?.errorMessage}")
+                    isLoginSuccessful.postValue(false)
                 }
 
                 Resource.Status.LOADING -> {
-
+                    Log.d("login", "loginnnnnnn = LOADING ${loginResponse.apiError?.errorCode}")
                 }
             }
         }
