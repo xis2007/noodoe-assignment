@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.noodoeassignment.AppConstant
 import com.example.noodoeassignment.R
 import com.example.noodoeassignment.api.ApiInterface
 import com.example.noodoeassignment.api.Resource
@@ -73,16 +74,14 @@ class LoginViewModel(
     }
 
     private fun login(email: String, pw: String) {
-        Log.d("login", "loginnnnnnn = $email & $pw")
         viewModelScope.launch(Dispatchers.IO) {
             val loginResponse = loginRepository.login(email, pw)
 
             when (loginResponse.status) {
                 Resource.Status.SUCCESS -> {
-                    var loginResponse = loginResponse.data
-                    Log.d("login", "loginnnnnnn = SUCCESS $loginResponse")
-
-                    if(loginResponse != null) {
+                    val data = loginResponse.data
+                    if(data != null) {
+                        AppConstant.loginResponse = data
                         isLoginSuccessful.postValue(true)
                     } else {
                         isLoginSuccessful.postValue(false)
@@ -90,12 +89,11 @@ class LoginViewModel(
                 }
 
                 Resource.Status.ERROR -> {
-                    Log.d("login", "loginnnnnnn = ERROR ${loginResponse.apiError?.errorCode} with message = ${loginResponse.apiError?.errorMessage}")
                     isLoginSuccessful.postValue(false)
                 }
 
                 Resource.Status.LOADING -> {
-                    Log.d("login", "loginnnnnnn = LOADING ${loginResponse.apiError?.errorCode}")
+
                 }
             }
         }

@@ -5,7 +5,6 @@ import android.content.Intent
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.example.noodoeassignment.R
 import com.example.noodoeassignment.base.BaseActivity
@@ -82,6 +81,7 @@ class LoginActivity : BaseActivity() {
         pwEditText.clearFocus()
         hideKeyboard()
     }
+
     private fun hideKeyboard() {
         rootView?.apply {
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

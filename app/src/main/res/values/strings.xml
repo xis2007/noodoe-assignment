@@ -8,4 +8,6 @@
     <string name="email_tag">Email:</string>
     <string name="timezone_hint">Timezone</string>
     <string name="login_incorrect_id_and_pw_hint">帳號密碼不正確</string>
+    <string name="update_success_hint">更新時區成功</string>
+    <string name="update_error_hint">無法更新時區</string>
 </resources>

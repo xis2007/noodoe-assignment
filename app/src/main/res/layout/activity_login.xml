@@ -24,7 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textEmailAddress"
-            android:hint="@string/email_hint"/>
+            android:hint="@string/email_hint"
+            android:maxLines="1"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -46,7 +47,8 @@
             android:id="@+id/pwEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/pw_hint"/>
+            android:hint="@string/pw_hint"
+            android:maxLines="1"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
