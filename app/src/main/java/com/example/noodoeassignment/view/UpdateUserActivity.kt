@@ -1,10 +1,9 @@
 package com.example.noodoeassignment.view
 
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import com.example.noodoeassignment.R
 import com.example.noodoeassignment.base.BaseActivity
@@ -32,14 +31,10 @@ class UpdateUserActivity : BaseActivity() {
                 timezoneInput.apply{
                     setAdapter(adapter)
                     setText(timezones[0].toString(), false)
-                    addTextChangedListener(object : TextWatcher {
-                        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-                        override fun onTextChanged(newTimezone: CharSequence, start: Int, before: Int, count: Int) {}
-                        override fun afterTextChanged(editable: Editable) {
-                            updateUserViewModel.updateUserTimezone(editable.toString())
-                            Log.d("updateUserTimezone", "updateUserTimezone timezone = $editable.toString()")
-                        }
-                    })
+
+                    addTextChangedListener {
+                        updateUserViewModel.updateUserTimezone(it.toString())
+                    }
                 }
             })
 
@@ -47,9 +42,14 @@ class UpdateUserActivity : BaseActivity() {
                 timezoneInput.setText(timezone.toString())
             })
 
-            isUpdatingServer.observe(this@UpdateUserActivity, Observer { isUpdating ->
-                timezoneInput.isEnabled = !isUpdating
+            isLoading.observe(this@UpdateUserActivity, Observer { visibility ->
+                updateUserProgressBar.visibility = visibility
             })
+
+            isInputEnabled.observe(this@UpdateUserActivity, Observer { isEnabled ->
+                timezoneInput.isEnabled = isEnabled
+            })
+
 
             updateHint.observe(this@UpdateUserActivity, Observer { updateErrorHint ->
                 if(updateErrorHint.isNotEmpty()) {

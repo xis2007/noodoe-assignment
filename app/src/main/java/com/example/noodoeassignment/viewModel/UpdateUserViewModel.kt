@@ -1,10 +1,11 @@
 package com.example.noodoeassignment.viewModel
 
 import android.app.Application
-import android.util.Log
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.noodoeassignment.App
 import com.example.noodoeassignment.AppConstant
 import com.example.noodoeassignment.R
 import com.example.noodoeassignment.api.ApiInterface
@@ -19,17 +20,18 @@ class UpdateUserViewModel(
     application: Application
 ): AndroidViewModel(application){
     private val updateUserRepository: UpdateUserRepository by lazy {
-        UpdateUserRepository(ApiInterface.getInstance())
+        UpdateUserRepository(App.retrofitService)
     }
 
     val email = MutableLiveData<String>("")
     val timezoneSelection = MutableLiveData<Int>(1)
     var timezonesList = MutableLiveData<ArrayList<Int>>()
-    val isUpdatingServer = MutableLiveData<Boolean>(false)
     val updateHint = MutableLiveData<String>("")
 
+    val isInputEnabled = MutableLiveData<Boolean>(true)
+    val isLoading = MutableLiveData<Int>(View.INVISIBLE)
+
     fun updateUserTimezone(timeZone: String) {
-        Log.d("updateUserTimezone", "updateUserTimezone timezone = $timeZone")
         val loginResponse = AppConstant.loginResponse
         if(loginResponse != null) {
             updateToServer(timeZone, loginResponse)
@@ -39,7 +41,9 @@ class UpdateUserViewModel(
     }
 
     private fun updateToServer(timeZone: String, loginResponse: LoginResponse) {
-        isUpdatingServer.postValue(true)
+        isLoading.postValue(View.VISIBLE)
+        isInputEnabled.postValue(false)
+
         viewModelScope.launch(Dispatchers.IO) {
             val remoteResource = updateUserRepository.updateUser(
                 loginResponse.objectId,
@@ -49,22 +53,21 @@ class UpdateUserViewModel(
 
             when (remoteResource.status) {
                 Resource.Status.SUCCESS -> {
-                    var response = remoteResource.data
-                    Log.d("updateUserTimezone", "updateUserTimezone timezone SUCCESS = $response")
+                    val response = remoteResource.data
                     if(response != null) {
-                        Log.d("updateUserTimezone", "updateUserTimezone timezone SUCCESS = ${response.updatedAt}")
                         updateHint.postValue(getApplication<Application>().getString(R.string.update_success_hint))
 
                     } else {
-                        Log.d("updateUserTimezone", "updateUserTimezone timezone null")
                         updateHint.postValue(getApplication<Application>().getString(R.string.update_error_hint))
                     }
-                    isUpdatingServer.postValue(false)
+                    isLoading.postValue(View.INVISIBLE)
+                    isInputEnabled.postValue(true)
                 }
 
                 Resource.Status.ERROR -> {
-                    Log.d("updateUserTimezone", "updateUserTimezone timezone ERROR ")
-                    isUpdatingServer.postValue(false)
+                    updateHint.postValue(getApplication<Application>().getString(R.string.update_error_hint))
+                    isLoading.postValue(View.INVISIBLE)
+                    isInputEnabled.postValue(true)
                 }
 
                 Resource.Status.LOADING -> {
@@ -81,7 +84,7 @@ class UpdateUserViewModel(
     }
 
     fun setLoginTimeZone() {
-        val timesZones = arrayListOf<Int>(1, 2, 3, 4, 5)
+        val timesZones = arrayListOf(1, 2, 3, 4, 5)
         val selectedTimeZone = AppConstant.loginResponse?.timezone
         val mapping = timesZones.find { it == selectedTimeZone }
         if(mapping == null){

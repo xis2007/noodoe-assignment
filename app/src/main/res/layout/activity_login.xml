@@ -7,6 +7,19 @@
     android:layout_height="match_parent"
     tools:context=".view.LoginActivity">
 
+    <ProgressBar
+        android:id="@+id/loginProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="16dp"
+        android:indeterminate="true"
+        android:layout_marginBottom="54dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginEnd="54dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailInputLayout"
         android:layout_width="0dp"
